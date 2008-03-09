@@ -1,9 +1,55 @@
-# modules/skeleton/manifests/init.pp - manage skeleton stuff
+# modules/spamassassin/manifests/init.pp - manage spamassassin stuff
 # Copyright (C) 2007 admin@immerda.ch
+# GPLv3
+# this module requires the amavisd-new module, as well the razor and the dcc module
+# this module is part of a whole bunch of modules, please have a look at the exim module
 #
 
-# modules_dir { "skeleton": }
+# modules_dir { "spamassassin": }
 
-class skeleton {
+class spamassassin {
+    case $operatingsystem {
+        gentoo: { include spamassassin::gentoo }
+        default: { include spamassassin::base }
+    }
+}
 
+class spamassassin::base {
+    package{'spamassassin':
+        ensure => installed,
+        require => [ 
+            Class[razor], 
+            Class[dcc] 
+        ],
+    }
+
+    service{spamd:
+        ensure => stopped,
+        enable => false,
+        hasstatus => true, 
+        require => Package[spamassassin],
+    }
+
+}
+
+class spamassassin::gentoo inherits spamassassin::base {
+    Package[spamassassin]{
+        category => 'mail-filter',
+    }
+
+    #conf.d file if needed
+    Service[spamassassin]{
+        require +> File["/etc/conf.d/spamd"],
+    }
+    file { "/etc/conf.d/spamd":
+        owner => "root",
+        group => "0",
+        mode  => 644,
+        ensure => present,
+        source => [
+            "puppet://$server/dist/spamassassin/conf.d/${fqdn}/spamd",
+            "puppet://$server/dist/spamassassin/conf.d/spamd",
+            "puppet://$server/spamassassin/conf.d/spamd"
+        ]
+    }
 }
