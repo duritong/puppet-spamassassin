@@ -41,15 +41,5 @@ class spamassassin::gentoo inherits spamassassin::base {
     Service[spamassassin]{
         require +> File["/etc/conf.d/spamd"],
     }
-    file { "/etc/conf.d/spamd":
-        owner => "root",
-        group => "0",
-        mode  => 644,
-        ensure => present,
-        source => [
-            "puppet://$server/dist/spamassassin/conf.d/${fqdn}/spamd",
-            "puppet://$server/dist/spamassassin/conf.d/spamd",
-            "puppet://$server/spamassassin/conf.d/spamd"
-        ]
-    }
+    gentoo::etcconfd{ spamd: }
 }
