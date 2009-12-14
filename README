@@ -1,0 +1,22 @@
+Spamassassin Puppet Module
+==========================
+
+The spamassassin::base class sets up basis spamassassin functionallity.
+spamassassin::debian adds fuzzyocr und pyzor support, which are set up as 
+seperate classes, but are tested on debian until now.
+
+Issues
+------
+- DCC has a non-free license according to debian, so it isn't included in the repository.
+  You have to install it by hand or put third party packages in your local debian repository.
+- fuzzyocr isn't included in debian lenny, you need the squeeze package. 
+
+Todo
+----
+- Support for fuzzyocr and pyzor for other distributions.
+- Install Spamassassin config files on other distributions.
+- from: http://wiki.apache.org/spamassassin/UsingNetworkTests
+  "Razor and Pyzor, in the past, have intermittently had outages that can result in timeouts and higher system load. 
+  Set the razor_timeout and pyzor_timeout values to a low value, if you're worried about this. "
+- Add varables to enable/disable the different tests easily (or should this be done in the classes ?).
+
