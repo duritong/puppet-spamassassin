@@ -5,6 +5,11 @@ The spamassassin::base class sets up basis spamassassin functionallity.
 spamassassin::debian adds fuzzyocr und pyzor support, which are set up as 
 seperate classes, but are tested on debian until now.
 
+Config
+------
+- Plugins: Set $spamassassin_[dcc,razor2,pyzor,fuzzyocr]_enabled to true to enable the 
+  corresponding plugins
+
 Issues
 ------
 - DCC has a non-free license according to debian, so it isn't included in the repository.

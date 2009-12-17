@@ -7,6 +7,25 @@
 
 # modules_dir { "spamassassin": }
 
+case $spamassassin_dcc_enabled {
+    "": { $spamassassin_dcc_enabled = "false" }
+    
+}
+
+case $spamassassin_pyzor_enabled {
+    "": { $spamassassin_pyzor_enabled = "false" }
+}
+
+case $spamassassin_razor2_enabled {
+    "": { $spamassassin_razor2_enabled = "false" }
+}
+
+case $spamassassin_fuzzyocr_enabled {
+    "": { $spamassassin_fuzzyocr_enabled = "false" }
+}
+
+
+
 class spamassassin {
     case $operatingsystem {
         gentoo: { include spamassassin::gentoo }
@@ -16,22 +35,17 @@ class spamassassin {
 }
 
 class spamassassin::base {
-    # since spamassassin::base needs Class razor and dcc we include it here
-    include razor    
-    include dcc
+    case $spamassassin_dcc_enabled { "true": { include dcc } }    
+    case $spamassassin_razor2_enabled { "true": { include razor } }    
     
     package { 'spamassassin':
         ensure => installed,
-        require => [ 
-            Class[razor], 
-            Class[dcc] 
-        ],
     }
     
     case $operatingsystem {
       debian: {$spamd_servicename = "spamassassin" }
       default: {$spamd_servicename="spamd"}
-      }
+    }
 
 
     service{spamd:
@@ -48,8 +62,14 @@ class spamassassin::debian inherits spamassassin::base {
     # fuzzyocr and pyzor are included here by default as well as they increase 
     # the hit-rate 
     
-    include fuzzyocr
-    include pyzor
+    case $spamassassin_pyzor_enabled { "true": { include pyzor } }    
+    case $spamassassin_fuzzyocr_enabled { 
+	"true": { include fuzzyocr } 
+	default: { file { ["/etc/spamassassin/FuzzyOcr.cf", 
+			    "/etc/spamassassin/FuzzyOcr.cf.real"] : 
+		    ensure => absent;}
+		    }
+    }    
 
     file {"/etc/default/spamassassin":
       source => "puppet:///spamassassin/debian/spamassassin",
@@ -66,7 +86,7 @@ class spamassassin::debian inherits spamassassin::base {
     }
 
     file {"/etc/spamassassin/v310.pre":
-      source => "puppet:///spamassassin/debian/v310.pre",
+      content  => template ("spamassassin/debian/v310.pre"),
       mode => 0644, owner => root, group => root,
       require => Package[spamassassin],
       notify => Service[spamassassin];

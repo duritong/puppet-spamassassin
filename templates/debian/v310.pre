@@ -1,3 +1,5 @@
+# Managed by Puppet !
+
 # This is the right place to customize your installation of SpamAssassin.
 #
 # See 'perldoc Mail::SpamAssassin::Conf' for details of what can be
@@ -21,15 +23,29 @@
 # DCC is disabled here because it is not open source.  See the DCC
 # license for more details.
 #
+<% if (spamassassin_dcc_enabled == "true" ) -%>
 loadplugin Mail::SpamAssassin::Plugin::DCC
+<% else -%>
+#loadplugin Mail::SpamAssassin::Plugin::DCC
+<% end -%>
 
 # Pyzor - perform Pyzor message checks.
 #
+<% if (spamassassin_pyzor_enabled == "true" ) -%>
 loadplugin Mail::SpamAssassin::Plugin::Pyzor
+<% else -%>
+#loadplugin Mail::SpamAssassin::Plugin::Pyzor
+<% end -%>
+
 
 # Razor2 - perform Razor2 message checks.
 #
+<% if (spamassassin_razor2_enabled == "true" ) -%>
 loadplugin Mail::SpamAssassin::Plugin::Razor2
+<% else -%>
+#loadplugin Mail::SpamAssassin::Plugin::Razor2
+<% end -%>
+
 
 # SpamCop - perform SpamCop message reporting
 #
