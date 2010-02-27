@@ -30,127 +30,116 @@ class spamassassin {
 }
 
 class spamassassin::base {
-    case $spamassassin_dcc_enabled { "true": { include dcc } }    
-    case $spamassassin_razor2_enabled { "true": { include razor } }    
+  case $spamassassin_dcc_enabled { "true": { include dcc } }    
+  case $spamassassin_razor2_enabled { "true": { include razor } }    
     
-    package { 'spamassassin':
-        ensure => installed,
-    }
+  package { 'spamassassin':
+    ensure => installed,
+  }
     
-    case $operatingsystem {
-      debian: {$spamd_servicename = "spamassassin" }
-      default: {$spamd_servicename="spamd"}
-    }
+  case $operatingsystem {
+    debian: {$spamd_servicename = "spamassassin" }
+    default: {$spamd_servicename="spamd"}
+  }
 
 
-    service{spamd:
-	name => $spamd_servicename,
-        ensure => stopped,
-        enable => false,
-        hasstatus => true, 
-        require => Package[spamassassin],
-    }
-
+  service{spamd:
+	  name => $spamd_servicename,
+    ensure => stopped,
+    enable => false,
+    hasstatus => true, 
+    require => Package[spamassassin],
+  }
 }
 
 class spamassassin::debian inherits spamassassin::base {
-    # fuzzyocr and pyzor are included here by default as well as they increase 
-    # the hit-rate 
+  # fuzzyocr and pyzor are included here by default as well as they increase 
+  # the hit-rate 
     
-    case $spamassassin_pyzor_enabled { "true": { include pyzor } }    
-    case $spamassassin_fuzzyocr_enabled { 
-	"true": { include fuzzyocr } 
-	default: { file { ["/etc/spamassassin/FuzzyOcr.cf", 
-			    "/etc/spamassassin/FuzzyOcr.cf.real"] : 
+  case $spamassassin_pyzor_enabled { "true": { include pyzor } }    
+  case $spamassassin_fuzzyocr_enabled { 
+	  "true": { include fuzzyocr } 
+	  default: { 
+      file { ["/etc/spamassassin/FuzzyOcr.cf", 
+			        "/etc/spamassassin/FuzzyOcr.cf.real"] : 
 		    ensure => absent;}
-		    }
-    }    
+		}
+  }    
 
-    file {"/etc/default/spamassassin":
-      source => "puppet:///spamassassin/debian/spamassassin",
-      mode => 0644, owner => root, group => root,
-      require => Package[spamassassin],
-      notify => Service[spamassassin];
-    }
+  file {"/etc/default/spamassassin":
+    source => "puppet:///spamassassin/debian/spamassassin",
+    require => Package[spamassassin],
+    notify => Service[spamassassin],
+    owner => root, group => 0, mode => 0644;
+  }
 
-    file {"/etc/spamassassin/local.cf":
-      source => "puppet:///spamassassin/debian/local.cf",
-      mode => 0644, owner => root, group => root,
-      require => Package[spamassassin],
-      notify => Service[spamassassin];
-    }
+  file {"/etc/spamassassin/local.cf":
+    source => "puppet:///spamassassin/debian/local.cf",
+    require => Package[spamassassin],
+    notify => Service[spamassassin],
+    owner => root, group => 0, mode => 0644;
+  }
 
-    file {"/etc/spamassassin/v310.pre":
-      content  => template ("spamassassin/debian/v310.pre"),
-      mode => 0644, owner => root, group => root,
-      require => Package[spamassassin],
-      notify => Service[spamassassin];
-    }
-
-
+  file {"/etc/spamassassin/v310.pre":
+    content  => template ("spamassassin/debian/v310.pre"),
+    require => Package[spamassassin],
+    notify => Service[spamassassin],
+    owner => root, group => 0, mode => 0644;
+  }
 }
 
 class spamassassin::gentoo inherits spamassassin::base {
-    Package[spamassassin]{
-        category => 'mail-filter',
-    }
+  Package[spamassassin]{
+    category => 'mail-filter',
+  }
 
-    #conf.d file if needed
-    Service[spamassassin]{
-        require +> File["/etc/conf.d/spamd"],
-    }
-    gentoo::etcconfd{ spamd: }
+  #conf.d file if needed
+  Service[spamassassin]{
+    require +> File["/etc/conf.d/spamd"],
+  }
+  gentoo::etcconfd{ spamd: }
 }
 
-
-
-
-
-
 class fuzzyocr {
-    case $operatingsystem {
-        debian,ubuntu: { include fuzzyocr::debian }
-        default: {  }
-    }
+  case $operatingsystem {
+    debian,ubuntu: { include fuzzyocr::debian }
+    default: {  }
+  }
 }
 
 class fuzzyocr::debian {
-    # FuzzyOCR currently only tested on debian
+  # FuzzyOCR currently only tested on debian
 
-    # currently there is no fuzzyocr package for lenny, but the squeeze package 
-    # works as well. You need to add it to your local repository
-    # http://packages.debian.org/squeeze/fuzzyocr
+  # currently there is no fuzzyocr package for lenny, but the squeeze package 
+  # works as well. You need to add it to your local repository
+  # http://packages.debian.org/squeeze/fuzzyocr
 
-    package { [ # required by fuzzyocr
-		"giflib-tools", "gifsicle", "libstring-approx-perl", "libmldbm-sync-perl", 
+  package { [ # required by fuzzyocr
+    "giflib-tools", "gifsicle", "libstring-approx-perl", "libmldbm-sync-perl", 
 		"libtie-cache-perl", "libgif4", "libmldbm-perl", "fuzzyocr", "gocr",
 		# additional ocr prgs
 		"tesseract-ocr", "tesseract-ocr-deu", "tesseract-ocr-eng",
-		"ocrad", 
-		]:
+		"ocrad" ]:
 		ensure => installed;
-    }
-    file {"/etc/spamassassin/FuzzyOcr.cf":
-      source => "puppet:///spamassassin/debian/FuzzyOcr.cf",
-      mode => 0644, owner => root, group => root,
-      require => Package[spamassassin],
-      notify => Service[spamassassin];
-    }
+  }
+  file {"/etc/spamassassin/FuzzyOcr.cf":
+    source => "puppet:///spamassassin/debian/FuzzyOcr.cf",
+    require => Package[spamassassin],
+    notify => Service[spamassassin],
+    owner => root, group => 0, mode => 0644;
+  }
 
 }
 
 class pyzor {
-    case $operatingsystem {
-        debian,ubuntu: { include pyzor::debian }
-        default: {  }
-    }
-
+  case $operatingsystem {
+    debian,ubuntu: { include pyzor::debian }
+    default: {  }
+  }
 }
 class pyzor::debian {
-    #also just tested in debian
-    
-   package { "pyzor": 
-        ensure => installed,
-    }
+  #also just tested in debian
+  package { "pyzor": 
+    ensure => installed,
+  }
 }
-
