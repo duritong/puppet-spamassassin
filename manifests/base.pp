@@ -9,6 +9,7 @@ class spamassassin::base {
   } else {
     file { ["/etc/spamassassin/FuzzyOcr.cf",
             "/etc/spamassassin/FuzzyOcr.cf.real"] :
+      notify => Service['spamd'],
 		  ensure => absent;
     }
   }
@@ -17,14 +18,7 @@ class spamassassin::base {
     ensure => installed,
   }
 
-  case $operatingsystem {
-    debian: {$spamd_servicename = "spamassassin" }
-    default: {$spamd_servicename="spamd"}
-  }
-
-
-  service{spamd:
-	  name => $spamd_servicename,
+  service{'spamd':
     ensure => stopped,
     enable => false,
     hasstatus => true,
