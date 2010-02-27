@@ -1,11 +1,9 @@
-# modules/spamassassin/manifests/init.pp - manage spamassassin stuff
+# manage spamassassin stuff
 # Copyright (C) 2007 admin@immerda.ch
 # GPLv3
 # this module requires the amavisd-new module, as well the razor and the dcc module
 # this module is part of a whole bunch of modules, please have a look at the exim module
 #
-
-# modules_dir { "spamassassin": }
 
 case $spamassassin_dcc_enabled {
     "": { $spamassassin_dcc_enabled = "false" }
