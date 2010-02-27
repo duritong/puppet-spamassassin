@@ -5,12 +5,12 @@ class spamassassin::base {
   if $spamassassin_razor2_enabled { require razor }
   if $spamassassin_pyzor_enabled { require pyzor }
   if $spamassassin_fuzzyocr_enabled {
-	  include fuzzyocr
+    include fuzzyocr
   } else {
     file { ["/etc/spamassassin/FuzzyOcr.cf",
             "/etc/spamassassin/FuzzyOcr.cf.real"] :
       notify => Service['spamd'],
-		  ensure => absent;
+      ensure => absent;
     }
   }
 
