@@ -1,17 +1,4 @@
 class spamassassin::debian inherits spamassassin::base {
-  # fuzzyocr and pyzor are included here by default as well as they increase 
-  # the hit-rate 
-    
-  case $spamassassin_pyzor_enabled { "true": { include pyzor } }    
-  case $spamassassin_fuzzyocr_enabled { 
-	  "true": { include fuzzyocr } 
-	  default: { 
-      file { ["/etc/spamassassin/FuzzyOcr.cf", 
-			        "/etc/spamassassin/FuzzyOcr.cf.real"] : 
-		    ensure => absent;}
-		}
-  }    
-
   file {"/etc/default/spamassassin":
     source => "puppet:///spamassassin/debian/spamassassin",
     require => Package[spamassassin],

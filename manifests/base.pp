@@ -1,7 +1,18 @@
 class spamassassin::base {
-  case $spamassassin_dcc_enabled { "true": { include dcc } }    
-  case $spamassassin_razor2_enabled { "true": { include razor } }    
-    
+  # fuzzyocr and pyzor are included here by default as well as they increase 
+  # the hit-rate 
+  if $spamassassin_dcc_enabled { require dcc }
+  if $spamassassin_razor2_enabled { require razor }    
+  if $spamassassin_pyzor_enabled { require pyzor }
+  if $spamassassin_fuzzyocr_enabled { 
+	  include fuzzyocr
+  } else {
+    file { ["/etc/spamassassin/FuzzyOcr.cf", 
+			      "/etc/spamassassin/FuzzyOcr.cf.real"] : 
+		  ensure => absent;
+    }
+  }    
+   
   package { 'spamassassin':
     ensure => installed,
   }
