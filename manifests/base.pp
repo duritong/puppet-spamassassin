@@ -34,7 +34,6 @@ class spamassassin::base {
     owner => root, group => 0, mode => 0644;
   }
 
-
   service{'spamd':
     ensure => stopped,
     enable => false,
