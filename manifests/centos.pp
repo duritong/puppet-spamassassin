@@ -1,4 +1,4 @@
-class spamassissin::centos inherits spamassassin::base {
+class spamassassin::centos inherits spamassassin::base {
   require gpg
   Service['spamd']{
     name => 'spamassassin'
