@@ -7,7 +7,7 @@ class spamassissin::centos inherits spamassassin::base {
   File['/etc/spamassassin/local.cf']{
     path => '/etc/mail/spamassassin/local.cf'
   }
-  File['/etc/spamassassin/v310.pre']
+  File['/etc/spamassassin/v310.pre']{
     path => '/etc/mail/spamassassin/v310.pre'
   }
 
