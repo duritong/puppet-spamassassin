@@ -1,0 +1,4 @@
+# Uncomment below to force nightly sa-update
+# (you don't need to do this if you use spamd or amavisd)
+
+#SAUPDATE=yes

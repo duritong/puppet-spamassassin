@@ -18,6 +18,23 @@ class spamassassin::base {
     ensure => installed,
   }
 
+  file {"/etc/spamassassin/local.cf":
+    source => [ "puppet://$server/site-spamassassin/${fqdn}/local.cf"
+                "puppet://$server/site-spamassassin/local.cf"
+                "puppet://$server/spamassassin/${operatingsystem}/local.cf" ],
+    require => Package['spamassassin'],
+    notify => Service['spamd'],
+    owner => root, group => 0, mode => 0644;
+  }
+
+  file {"/etc/spamassassin/v310.pre":
+    content  => template ("spamassassin/v310.pre"),
+    require => Package['spamassassin'],
+    notify => Service['spamd'],
+    owner => root, group => 0, mode => 0644;
+  }
+
+
   service{'spamd':
     ensure => stopped,
     enable => false,

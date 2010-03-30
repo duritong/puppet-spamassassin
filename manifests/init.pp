@@ -9,6 +9,7 @@ class spamassassin {
   case $operatingsystem {
     gentoo: { include spamassassin::gentoo }
     debian,ubuntu: { include spamassassin::debian }
+    centos: { include spamassassin::centos }
     default: { include spamassassin::base }
   }
 }
