@@ -23,7 +23,7 @@
 # DCC is disabled here because it is not open source.  See the DCC
 # license for more details.
 #
-<% if (spamassassin_dcc_enabled == "true" ) -%>
+<% if scope.lookupvar('spamassassin::dcc_enabled').to_s == "true" -%>
 loadplugin Mail::SpamAssassin::Plugin::DCC
 <% else -%>
 #loadplugin Mail::SpamAssassin::Plugin::DCC
@@ -31,7 +31,7 @@ loadplugin Mail::SpamAssassin::Plugin::DCC
 
 # Pyzor - perform Pyzor message checks.
 #
-<% if (spamassassin_pyzor_enabled == "true" ) -%>
+<% if scope.lookupvar('spamassassin::pyzor_enabled').to_s == "true" -%>
 loadplugin Mail::SpamAssassin::Plugin::Pyzor
 <% else -%>
 #loadplugin Mail::SpamAssassin::Plugin::Pyzor
@@ -40,7 +40,7 @@ loadplugin Mail::SpamAssassin::Plugin::Pyzor
 
 # Razor2 - perform Razor2 message checks.
 #
-<% if (spamassassin_razor2_enabled == "true" ) -%>
+<% if scope.lookupvar('spamassassin::razor2_enabled').to_s == "true" -%>
 loadplugin Mail::SpamAssassin::Plugin::Razor2
 <% else -%>
 #loadplugin Mail::SpamAssassin::Plugin::Razor2
