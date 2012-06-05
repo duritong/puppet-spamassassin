@@ -11,7 +11,7 @@ class spamassassin(
   $pyzor_enabled = false,
   $fuzzyocr_enabled = false
 ) {
-  case $operatingsystem {
+  case $::operatingsystem {
     gentoo: { include spamassassin::gentoo }
     debian,ubuntu: { include spamassassin::debian }
     centos: { include spamassassin::centos }

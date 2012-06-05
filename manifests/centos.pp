@@ -19,15 +19,15 @@ class spamassassin::centos inherits spamassassin::base {
   }
 
   file{'/etc/sysconfig/sa-update':
-    source => [ "puppet:///modules/site-spamassassin/sysconfig/${fqdn}/sa-update", 
-                "puppet:///modules/site-spamassassin/sysconfig/sa-update", 
+    source => [ "puppet:///modules/site_spamassassin/sysconfig/${::fqdn}/sa-update", 
+                "puppet:///modules/site_spamassassin/sysconfig/sa-update", 
                 "puppet:///modules/spamassassin/sysconfig/sa-update" ], 
     require => Package['spamassassin'],
     owner => root, group => 0, mode => 0644;
   }
 
   file{'/etc/cron.d/sa-update':
-    source => "puppet:///modules/spamassassin/${operatingsystem}/sa-update.cron",
+    source => "puppet:///modules/spamassassin/${::operatingsystem}/sa-update.cron",
     require => Package['spamassassin'],
     owner => root, group => 0, mode => 0644;
   }

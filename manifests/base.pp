@@ -19,9 +19,9 @@ class spamassassin::base {
   }
 
   file {"/etc/spamassassin/local.cf":
-    source => [ "puppet:///modules/site-spamassassin/${fqdn}/local.cf",
-                "puppet:///modules/site-spamassassin/local.cf",
-                "puppet:///modules/spamassassin/${operatingsystem}/local.cf" ],
+    source => [ "puppet:///modules/site_spamassassin/${::fqdn}/local.cf",
+                "puppet:///modules/site_spamassassin/local.cf",
+                "puppet:///modules/spamassassin/${::operatingsystem}/local.cf" ],
     require => Package['spamassassin'],
     notify => Service['spamd'],
     owner => root, group => 0, mode => 0644;
