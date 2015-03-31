@@ -4,19 +4,15 @@
 # this module requires the amavisd-new module, as well the razor and the dcc module
 # this module is part of a whole bunch of modules, please have a look at the exim module
 #
-
 # manages shorewall with a few extras
 class spamassassin(
-  $dcc_enable       = false,
-  $razor2_enabled   = false,
-  $pyzor_enabled    = false,
-  $fuzzyocr_enabled = false,
-  $use_shorewall    = false,
+  $config_content = false,
+  $site_config    = 'site_spamassassin',
+  $use_shorewall  = false,
 ) {
   case $::operatingsystem {
-    gentoo: { include spamassassin::gentoo }
-    debian,ubuntu: { include spamassassin::debian }
-    centos: { include spamassassin::centos }
+    'Debian','Ubuntu': { include spamassassin::debian }
+    'CentOS': { include spamassassin::centos }
     default: { include spamassassin::base }
   }
 }

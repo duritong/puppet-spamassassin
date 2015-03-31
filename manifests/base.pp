@@ -1,23 +1,7 @@
 # manage the basic installation parts
 class spamassassin::base {
-  # fuzzyocr and pyzor are included here by default as well as they increase
-  # the hit-rate
-  if $spamassassin::dcc_enabled { require dcc }
-  if $spamassassin::razor2_enabled { require razor }
-  if $spamassassin::pyzor_enabled {
-    class{'pyzor':
-      use_shorewall => $spamassassin::use_shorewall
-    }
-    Package['pyzor'] -> Package['spamassassin']
-  }
-  if $spamassassin::fuzzyocr_enabled {
-    include fuzzyocr
-  } else {
-    file { ["/etc/spamassassin/FuzzyOcr.cf",
-            "/etc/spamassassin/FuzzyOcr.cf.real"] :
-      notify => Service['spamd'],
-      ensure => absent;
-    }
+  class{'pyzor':
+    use_shorewall => $spamassassin::use_shorewall
   }
 
   package { 'spamassassin':
@@ -25,29 +9,20 @@ class spamassassin::base {
   }
 
   file {"/etc/spamassassin/local.cf":
-    source  => [ "puppet:///modules/site_spamassassin/${::fqdn}/local.cf",
-                 'puppet:///modules/site_spamassassin/local.cf',
-                 "puppet:///modules/spamassassin/${::operatingsystem}/local.cf" ],
     require => Package['spamassassin'],
-    notify  => Service['spamd'],
     owner   => root,
     group   => 0,
     mode    => '0644';
   }
-
-  file {"/etc/spamassassin/v310.pre":
-    content => template ("spamassassin/v310.pre"),
-    require => Package['spamassassin'],
-    notify  => Service['spamd'],
-    owner   => root,
-    group   => 0,
-    mode    => '0644';
-  }
-
-  service{'spamd':
-    ensure    => stopped,
-    enable    => false,
-    hasstatus => true,
-    require   => Package[spamassassin],
+  if $spamassassin::config_content {
+    File['/etc/spamassassin/local.cf']{
+      content => $spamassassin::config_content
+    }
+  } else {
+    File['/etc/spamassassin/local.cf']{
+      source  => [ "puppet:///modules/${spamassassin::site_config}/${::fqdn}/local.cf",
+                   "puppet:///modules/${spamassassin::site_config}/local.cf",
+                   "puppet:///modules/spamassassin/${::operatingsystem}/local.cf" ],
+    }
   }
 }
