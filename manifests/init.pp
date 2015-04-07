@@ -15,4 +15,7 @@ class spamassassin(
     'CentOS': { include spamassassin::centos }
     default: { include spamassassin::base }
   }
+  if $use_shorewall {
+    include ::shorewall::rules::out::razor
+  }
 }
