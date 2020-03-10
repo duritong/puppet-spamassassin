@@ -2,7 +2,7 @@
 class spamassassin::centos inherits spamassassin::base {
   require gpg
 
-  File['/etc/spamassassin/local.cf']{
+  Concat['/etc/spamassassin/local.cf']{
     path => '/etc/mail/spamassassin/local.cf'
   }
 
