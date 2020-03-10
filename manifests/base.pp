@@ -20,11 +20,11 @@ class spamassassin::base {
       order  => 50,
   }
   if $spamassassin::config_content {
-    Concat_file['spamassassin-main-config']{
+    Concat_fragment['spamassassin-main-config']{
       content => $spamassassin::config_content
     }
   } else {
-    Concat_file['spamassassin-main-config']{
+    Concat_fragment['spamassassin-main-config']{
       source  => [ "puppet:///modules/${spamassassin::site_config}/${::fqdn}/local.cf",
                     "puppet:///modules/${spamassassin::site_config}/local.cf",
                     "puppet:///modules/spamassassin/${::operatingsystem}/local.cf" ],
