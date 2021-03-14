@@ -7,9 +7,11 @@ class spamassassin::centos inherits spamassassin::base {
   }
 
   # https://bugzilla.redhat.com/show_bug.cgi?id=1938575
-  file { '/etc/mail/spamassassin/channel.d/sought.conf':
-    ensure  => absent,
-    require => Package['spamassassin'],
+  if versioncmp($facts['os']['release']['major'],'8') < 0 {
+    file { '/etc/mail/spamassassin/channel.d/sought.conf':
+      ensure  => absent,
+      require => Package['spamassassin'],
+    }
   }
 
   file {
