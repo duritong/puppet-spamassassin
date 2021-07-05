@@ -12,14 +12,20 @@ class spamassassin::centos inherits spamassassin::base {
       ensure  => absent,
       require => Package['spamassassin'],
     }
-  }
 
-  file {
-    '/etc/cron.d/sa-update':
-      source  => "puppet:///modules/spamassassin/${facts['os']['name']}/sa-update.cron",
+    file {
+      '/etc/cron.d/sa-update':
+        source  => "puppet:///modules/spamassassin/${facts['os']['name']}/sa-update.cron",
+        require => Package['spamassassin'],
+        owner   => root,
+        group   => 0,
+        mode    => '0644';
+    }
+  } else {
+    service { 'sa-update.timer':
+      ensure  => true,
+      enable  => true,
       require => Package['spamassassin'],
-      owner   => root,
-      group   => 0,
-      mode    => '0644';
+    }
   }
 }
