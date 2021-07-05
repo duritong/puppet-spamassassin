@@ -1,6 +1,6 @@
 # manage the basic installation parts
 class spamassassin::base {
-  class{'pyzor':
+  class { 'pyzor':
     use_shorewall => $spamassassin::use_shorewall,
   }
 
@@ -8,26 +8,26 @@ class spamassassin::base {
     ensure => installed,
   }
 
-  concat {'/etc/spamassassin/local.cf':
+  concat { '/etc/spamassassin/local.cf':
     require => Package['spamassassin'],
     owner   => root,
     group   => 0,
     mode    => '0644';
   }
-  concat_fragment{
+  concat_fragment {
     'spamassassin-main-config':
       target => '/etc/spamassassin/local.cf',
       order  => 50,
   }
   if $spamassassin::config_content {
-    Concat_fragment['spamassassin-main-config']{
+    Concat_fragment['spamassassin-main-config'] {
       content => $spamassassin::config_content
     }
   } else {
-    Concat_fragment['spamassassin-main-config']{
-      source  => [ "puppet:///modules/${spamassassin::site_config}/${::fqdn}/local.cf",
-                    "puppet:///modules/${spamassassin::site_config}/local.cf",
-                    "puppet:///modules/spamassassin/${::operatingsystem}/local.cf" ],
+    Concat_fragment['spamassassin-main-config'] {
+      source  => ["puppet:///modules/${spamassassin::site_config}/${facts['networking']['fqdn']}/local.cf",
+        "puppet:///modules/${spamassassin::site_config}/local.cf",
+      "puppet:///modules/spamassassin/${facts['os']['name']}/local.cf"],
     }
   }
 }

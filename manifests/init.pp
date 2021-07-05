@@ -6,17 +6,17 @@
 # please have a look at the exim module
 #
 # manages shorewall with a few extras
-class spamassassin(
+class spamassassin (
   $config_content = false,
   $site_config    = 'site_spamassassin',
   $use_shorewall  = false,
 ) {
-  case $::operatingsystem {
-    'Debian','Ubuntu': { include ::spamassassin::debian }
-    'CentOS': { include ::spamassassin::centos }
-    default: { include ::spamassassin::base }
+  case $facts['os']['name'] {
+    'Debian','Ubuntu': { include spamassassin::debian }
+    'CentOS': { include spamassassin::centos }
+    default: { include spamassassin::base }
   }
   if $use_shorewall {
-    include ::shorewall::rules::out::razor
+    include shorewall::rules::out::razor
   }
 }
