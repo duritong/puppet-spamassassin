@@ -9,14 +9,14 @@
 class spamassassin (
   $config_content = false,
   $site_config    = 'site_spamassassin',
-  $use_shorewall  = false,
+  $use_firewall  = false,
 ) {
   case $facts['os']['name'] {
     'Debian','Ubuntu': { include spamassassin::debian }
     'CentOS': { include spamassassin::centos }
     default: { include spamassassin::base }
   }
-  if $use_shorewall {
-    include shorewall::rules::out::razor
+  if $use_firewall {
+    include firewall::rules::out::razor
   }
 }

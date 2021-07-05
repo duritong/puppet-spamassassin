@@ -1,7 +1,7 @@
 # manage the basic installation parts
 class spamassassin::base {
   class { 'pyzor':
-    use_shorewall => $spamassassin::use_shorewall,
+    use_firewall => $spamassassin::use_firewall,
   }
 
   package { 'spamassassin':
