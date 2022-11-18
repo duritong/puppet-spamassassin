@@ -8,6 +8,18 @@ class spamassassin::base {
     ensure => installed,
   }
 
+  concat { '/etc/spamassassin/local.pre':
+    require => Package['spamassassin'],
+    owner   => root,
+    group   => 0,
+    mode    => '0644';
+  }
+  concat_fragment {
+    'spamassassin-main-pre':
+      content => "# local additions to pre files\n",
+      target  => '/etc/spamassassin/local.pre',
+      order   => 20,
+  }
   concat { '/etc/spamassassin/local.cf':
     require => Package['spamassassin'],
     owner   => root,

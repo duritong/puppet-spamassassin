@@ -5,6 +5,9 @@ class spamassassin::centos inherits spamassassin::base {
   Concat['/etc/spamassassin/local.cf'] {
     path => '/etc/mail/spamassassin/local.cf'
   }
+  Concat['/etc/spamassassin/local.pre'] {
+    path => '/etc/mail/spamassassin/local.pre'
+  }
 
   # https://bugzilla.redhat.com/show_bug.cgi?id=1938575
   if versioncmp($facts['os']['release']['major'],'8') < 0 {
